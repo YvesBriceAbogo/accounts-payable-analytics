@@ -1,0 +1,134 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 03: SUPPLIER PAYMENT PERFORMANCE
+//
+// PURPOSE:
+// Evaluate supplier payment coverage and estimate
+// the payment period over a dynamic six-month window.
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. SUPPLIER PAYMENT RATE
+//
+// Business Definition:
+// Measures the proportion of supplier purchases
+// covered by recorded supplier payments.
+//
+// Formula:
+// Payment Rate = Total Payments / Total Purchases
+//
+// Power BI Format: Percentage (2 decimal places)
+// -----------------------------------------------------
+
+Taux de Paiement =
+DIVIDE(
+    [Total Réglé],
+    [Total Achats]
+)
+
+
+// -----------------------------------------------------
+// 2. PREVIOUS-YEAR PAYMENT RATE
+//
+// Business Definition:
+// Evaluates supplier payment coverage during
+// the equivalent reporting period of the prior year.
+//
+// Requirement:
+// A valid Calendar date table and appropriate
+// date relationships.
+//
+// Power BI Format: Percentage (2 decimal places)
+// -----------------------------------------------------
+
+PY Taux de Paiement =
+CALCULATE(
+    [Taux de Paiement],
+    SAMEPERIODLASTYEAR(
+        'Calendar'[Date]
+    )
+)
+
+
+// -----------------------------------------------------
+// 3. ESTIMATED DPO - ROLLING SIX MONTHS
+//
+// Business Definition:
+// Estimates the supplier payment period using
+// purchases and payments recorded during a
+// dynamic six-month reporting window.
+//
+// Methodology:
+// Estimated DPO =
+// ((Purchases - Payments) / Purchases)
+// * Number of Days in the Period
+//
+// Reference Date:
+// Most recent supplier payment date.
+//
+// Reporting Period:
+// Six calendar months ending in the month
+// of the latest recorded payment.
+//
+// Financial Interpretation:
+// This is a customized DPO estimate, not the
+// conventional DPO based on average payables.
+// -----------------------------------------------------
+
+DPO 6 mois(jours) =
+
+VAR DateReference =
+    CALCULATE(
+        MAX(REGLEMENTS[Date_Reglement]),
+        REMOVEFILTERS()
+    )
+
+VAR DateFin =
+    EOMONTH(
+        DateReference,
+        0
+    )
+
+VAR DateDebut =
+    EOMONTH(
+        DateFin,
+        -6
+    ) + 1
+
+VAR Periode =
+    FILTER(
+        ALL('Calendar'),
+        'Calendar'[Date] >= DateDebut
+            && 'Calendar'[Date] <= DateFin
+    )
+
+VAR AchatsPeriode =
+    CALCULATE(
+        [Total Achats],
+        Periode
+    )
+
+VAR ReglementsPeriode =
+    CALCULATE(
+        [Total Réglé],
+        Periode
+    )
+
+VAR SoldeNetPeriode =
+    AchatsPeriode - ReglementsPeriode
+
+VAR NombreJours =
+    DATEDIFF(
+        DateDebut,
+        DateFin,
+        DAY
+    ) + 1
+
+RETURN
+    DIVIDE(
+        SoldeNetPeriode,
+        AchatsPeriode
+    ) * NombreJours

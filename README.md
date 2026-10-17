@@ -475,16 +475,25 @@ Each directory contains the relevant scripts, visualizations, reports, or techni
 
 ---
 
-## 16. Interactive Power BI Report
+## 16. Power BI Dashboard & Report
 
-The report is available in Power BI Service.
+The Accounts Payable Analytics dashboard was developed
+using Power BI Desktop and published to Power BI Service.
 
-**Interactive Dashboard:** [View Report](YOUR_POWER_BI_REPORT_URL)
+The complete report is available in PDF format,
+allowing recruiters and other visitors to review
+the financial analysis without requiring a Power BI account.
 
-**Note:** Access to the interactive report may require appropriate Power BI permissions.
+### Explore the Project
 
-A PDF version of the dashboard is also available in the `reports` directory.
+[**View the Complete Power BI Dashboard (PDF)**](reports/accounts-payable-dashboard.pdf)
 
+[**Explore Dashboard Screenshots**](images/)
+
+[**View the Power BI Data Model**](images/data-model.png)
+
+Public interactive access is currently unavailable
+due to Power BI sharing restrictions.
 ---
 
 ## 17. About the Author

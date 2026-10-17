@@ -1,0 +1,148 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 02: ACCOUNTS PAYABLE AGING ANALYSIS
+//
+// PURPOSE:
+// Analyze supplier invoices according to their
+// payment status and overdue aging categories.
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. NOT-YET-DUE PAYABLES
+//
+// Business Definition:
+// Total outstanding balances of supplier invoices
+// whose contractual due dates have not yet passed.
+//
+// Accounting Logic:
+// Invoice Status = "Non échue"
+// -----------------------------------------------------
+
+Dettes non Echues =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] = "Non échue"
+)
+
+
+// -----------------------------------------------------
+// 2. NUMBER OF NOT-YET-DUE INVOICES
+//
+// Business Definition:
+// Number of supplier invoices whose payment
+// deadlines have not yet expired.
+// -----------------------------------------------------
+
+Nbre Factures non Echues =
+CALCULATE(
+    [Nbre Facture reçues],
+    DETTES[Statut] = "Non échue"
+)
+
+
+// -----------------------------------------------------
+// 3. OVERDUE ACCOUNTS PAYABLE
+//
+// Business Definition:
+// Total outstanding balances of supplier invoices
+// classified as overdue.
+//
+// Aging Categories:
+// 0–30 days
+// 31–60 days
+// 61–90 days
+// More than 90 days
+// -----------------------------------------------------
+
+Dettes Echues =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] IN {
+        "Échue [0 ; 30]",
+        "Échue [31 ; 60]",
+        "Échue [61 ; 90]",
+        "Échue >90"
+    }
+)
+
+
+// -----------------------------------------------------
+// 4. NUMBER OF OVERDUE SUPPLIER INVOICES
+//
+// Business Definition:
+// Number of distinct supplier invoices
+// classified as overdue.
+// -----------------------------------------------------
+
+Nbre de Factures Echues =
+CALCULATE(
+    [Nbre Facture reçues],
+    DETTES[Statut] IN {
+        "Échue [0 ; 30]",
+        "Échue [31 ; 60]",
+        "Échue [61 ; 90]",
+        "Échue >90"
+    }
+)
+
+
+// -----------------------------------------------------
+// 5. OVERDUE PAYABLES: 0–30 DAYS
+//
+// Business Definition:
+// Outstanding balances overdue by up to 30 days.
+// -----------------------------------------------------
+
+Dettes Echues 0-30 =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] = "Échue [0 ; 30]"
+)
+
+
+// -----------------------------------------------------
+// 6. OVERDUE PAYABLES: 31–60 DAYS
+//
+// Business Definition:
+// Outstanding balances overdue between
+// 31 and 60 days.
+// -----------------------------------------------------
+
+Dettes Echues 31-60 =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] = "Échue [31 ; 60]"
+)
+
+
+// -----------------------------------------------------
+// 7. OVERDUE PAYABLES: 61–90 DAYS
+//
+// Business Definition:
+// Outstanding balances overdue between
+// 61 and 90 days.
+// -----------------------------------------------------
+
+Dettes Echues 61-90 =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] = "Échue [61 ; 90]"
+)
+
+
+// -----------------------------------------------------
+// 8. OVERDUE PAYABLES: MORE THAN 90 DAYS
+//
+// Business Definition:
+// Outstanding balances overdue by more than
+// 90 days.
+// -----------------------------------------------------
+
+Dettes Echues >90 =
+CALCULATE(
+    [Total Solde],
+    DETTES[Statut] = "Échue >90"
+)

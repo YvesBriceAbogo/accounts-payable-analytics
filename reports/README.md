@@ -104,13 +104,28 @@ The main dashboard screenshots are available in the project's image directory.
 
 ---
 
-## 6. Interactive Power BI Report
+## 6. Power BI Report Availability
 
-The interactive version of the dashboard is hosted in Power BI Service.
+The Accounts Payable Analytics dashboard was developed
+in Power BI Desktop and published to Power BI Service.
 
-**Report Link:** To be added when public sharing is enabled.
+Public interactive access is currently unavailable
+due to the sharing restrictions of the Power BI environment.
 
-Access may require appropriate Power BI permissions.
+However, the complete dashboard can be explored through
+the PDF report and the dashboard screenshots provided
+in this repository.
+
+### Available Resources
+
+[**Download the Complete Dashboard (PDF)**](accounts-payable-dashboard.pdf)
+
+[**View Dashboard Screenshots**](../images/)
+
+The report includes four analytical pages covering
+financial KPIs, supplier payment performance,
+accounts payable aging, cash flow forecasting,
+and detailed supplier invoice analysis.
 
 ---
 

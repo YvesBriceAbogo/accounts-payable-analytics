@@ -1,0 +1,144 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 06: CALENDAR DIMENSION
+//
+// PURPOSE:
+// Create a continuous date dimension supporting
+// financial time intelligence and cash flow forecasting.
+//
+// DATE SOURCES:
+// - Supplier invoice dates
+// - Supplier payment dates
+// - Contractual payment due dates
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. CALENDAR TABLE
+//
+// Business Definition:
+// Creates a continuous calendar covering all
+// relevant financial transaction dates.
+//
+// The calendar begins on January 1 of the
+// earliest transaction year.
+//
+// The end date covers the latest invoice,
+// payment or contractual due date.
+// -----------------------------------------------------
+
+Calendar =
+
+VAR MinInvoiceDate =
+    MIN(DETTES[Date_facture])
+
+VAR MinPaymentDate =
+    MIN(REGLEMENTS[Date_Reglement])
+
+VAR MinDate =
+    MIN(
+        MinInvoiceDate,
+        MinPaymentDate
+    )
+
+VAR MaxInvoiceDate =
+    MAX(DETTES[Date_facture])
+
+VAR MaxPaymentDate =
+    MAX(REGLEMENTS[Date_Reglement])
+
+VAR MaxDueDate =
+    MAX(DETTES[Echeance])
+
+VAR MaxDate =
+    MAX(
+        MaxInvoiceDate,
+        MAX(
+            MaxPaymentDate,
+            MaxDueDate
+        )
+    )
+
+RETURN
+    CALENDAR(
+        DATE(
+            YEAR(MinDate),
+            1,
+            1
+        ),
+        EOMONTH(
+            MaxDate,
+            0
+        )
+    )
+
+
+// -----------------------------------------------------
+// 2. YEAR
+//
+// Calculated Column:
+// Extracts the calendar year.
+// -----------------------------------------------------
+
+Year =
+YEAR(
+    'Calendar'[Date]
+)
+
+
+// -----------------------------------------------------
+// 3. MONTH NAME
+//
+// Calculated Column:
+// Displays abbreviated month names.
+// -----------------------------------------------------
+
+Mois =
+FORMAT(
+    'Calendar'[Date],
+    "mmm"
+)
+
+
+// -----------------------------------------------------
+// 4. MONTH NUMBER
+//
+// Calculated Column:
+// Used to sort month names chronologically.
+// -----------------------------------------------------
+
+Mois Num =
+MONTH(
+    'Calendar'[Date]
+)
+
+
+// -----------------------------------------------------
+// 5. YEAR-MONTH
+//
+// Calculated Column:
+// Facilitates chronological analysis across
+// multiple calendar years.
+// -----------------------------------------------------
+
+Year-Month =
+FORMAT(
+    'Calendar'[Date],
+    "yyyy-MM"
+)
+
+
+// -----------------------------------------------------
+// 6. QUARTER
+//
+// Calculated Column:
+// Supports quarterly financial analysis.
+// -----------------------------------------------------
+
+Quarter =
+"Q" & FORMAT(
+    'Calendar'[Date],
+    "Q"
+)

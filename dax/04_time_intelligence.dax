@@ -1,0 +1,160 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 04: FINANCIAL TIME INTELLIGENCE
+//
+// PURPOSE:
+// Analyze cumulative financial transactions
+// and compare payment performance across periods.
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. YEAR-TO-DATE PURCHASES
+//
+// Business Definition:
+// Calculates cumulative supplier purchases
+// from the beginning of the calendar year
+// to the current reporting date.
+//
+// Required Relationship:
+// Calendar[Date] -> DETTES[Date_facture]
+// -----------------------------------------------------
+
+YTD Achats =
+TOTALYTD(
+    [Total Achats],
+    'Calendar'[Date]
+)
+
+
+// -----------------------------------------------------
+// 2. YEAR-TO-DATE SUPPLIER PAYMENTS
+//
+// Business Definition:
+// Calculates cumulative supplier payments
+// from the beginning of the calendar year
+// to the current reporting date.
+//
+// Required Relationship:
+// Calendar[Date] -> REGLEMENTS[Date_Reglement]
+// -----------------------------------------------------
+
+YTD Montant Réglé =
+TOTALYTD(
+    [Total Réglé],
+    'Calendar'[Date]
+)
+
+
+// -----------------------------------------------------
+// 3. YEAR-TO-DATE NET PAYABLE MOVEMENT
+//
+// Business Definition:
+// Calculates the cumulative difference between
+// supplier purchases and payments.
+//
+// Important:
+// This is a year-to-date net movement,
+// not necessarily the historical accounting
+// balance of accounts payable.
+// -----------------------------------------------------
+
+YTD Solde Dû =
+[YTD Achats] - [YTD Montant Réglé]
+
+
+// -----------------------------------------------------
+// 4. PREVIOUS-YEAR PAYMENT RATE
+//
+// Business Definition:
+// Calculates payment coverage for the equivalent
+// period of the preceding calendar year.
+//
+// Required:
+// Historical data and a valid Calendar table.
+// -----------------------------------------------------
+
+PY Taux de Paiement =
+CALCULATE(
+    [Taux de Paiement],
+    SAMEPERIODLASTYEAR(
+        'Calendar'[Date]
+    )
+)
+
+
+// -----------------------------------------------------
+// 5. PREVIOUS-YEAR ESTIMATED DPO
+// EQUIVALENT SIX-MONTH REPORTING PERIOD
+//
+// Business Definition:
+// Calculates an estimated DPO over the same
+// six-month calendar period one year earlier.
+//
+// Methodology:
+// ((Purchases - Payments) / Purchases)
+// * Number of Days in the Period
+//
+// Reference:
+// Latest recorded supplier payment date.
+// -----------------------------------------------------
+
+PY DPO 6 mois =
+
+VAR DateReference =
+    CALCULATE(
+        MAX(REGLEMENTS[Date_Reglement]),
+        REMOVEFILTERS()
+    )
+
+VAR DateFinActuelle =
+    EOMONTH(
+        DateReference,
+        0
+    )
+
+VAR DateFinPY =
+    EOMONTH(
+        DateFinActuelle,
+        -12
+    )
+
+VAR DateDebutPY =
+    EOMONTH(
+        DateFinPY,
+        -6
+    ) + 1
+
+VAR PeriodePY =
+    FILTER(
+        ALL('Calendar'),
+        'Calendar'[Date] >= DateDebutPY
+            && 'Calendar'[Date] <= DateFinPY
+    )
+
+VAR AchatsPY =
+    CALCULATE(
+        [Total Achats],
+        PeriodePY
+    )
+
+VAR ReglementsPY =
+    CALCULATE(
+        [Total Réglé],
+        PeriodePY
+    )
+
+VAR NombreJoursPY =
+    DATEDIFF(
+        DateDebutPY,
+        DateFinPY,
+        DAY
+    ) + 1
+
+RETURN
+    DIVIDE(
+        AchatsPY - ReglementsPY,
+        AchatsPY
+    ) * NombreJoursPY

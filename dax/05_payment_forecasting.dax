@@ -1,0 +1,92 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 05: SUPPLIER PAYMENT FORECASTING
+//
+// PURPOSE:
+// Estimate future supplier cash outflows using
+// contractual invoice due dates and outstanding balances.
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. FORECAST PAYMENTS BY CONTRACTUAL DUE DATE
+//
+// Business Definition:
+// Allocates outstanding supplier liabilities
+// to their contractual payment due dates.
+//
+// Required Relationship:
+// Calendar[Date] -> DETTES[Echeance]
+//
+// The relationship should be inactive and activated
+// through USERELATIONSHIP().
+//
+// Methodological Note:
+// This measure represents a contractual payment
+// schedule, not a statistical cash flow forecast.
+// -----------------------------------------------------
+
+Forecast Payments =
+CALCULATE(
+    SUM(DETTES[Solde]),
+
+    USERELATIONSHIP(
+        'Calendar'[Date],
+        DETTES[Echeance]
+    ),
+
+    DETTES[Solde] > 0
+)
+
+
+// -----------------------------------------------------
+// 2. FORECAST PAYMENTS - NEXT THREE MONTHS
+//
+// Business Definition:
+// Calculates outstanding supplier payments
+// scheduled over a dynamic three-month period.
+//
+// Reference Date:
+// Latest recorded supplier payment date.
+//
+// Reporting Window:
+// Three calendar months beginning with the
+// month following the latest recorded payment.
+//
+// Example:
+// Latest payment: September 2026
+// Forecast period: October–December 2026
+// -----------------------------------------------------
+
+Forecast Payments Next 3 Months =
+
+VAR LastPaymentDate =
+    CALCULATE(
+        MAX(REGLEMENTS[Date_Reglement]),
+        REMOVEFILTERS()
+    )
+
+VAR StartDate =
+    EOMONTH(
+        LastPaymentDate,
+        0
+    ) + 1
+
+VAR EndDate =
+    EOMONTH(
+        StartDate,
+        2
+    )
+
+RETURN
+    CALCULATE(
+        [Forecast Payments],
+
+        DATESBETWEEN(
+            'Calendar'[Date],
+            StartDate,
+            EndDate
+        )
+    )

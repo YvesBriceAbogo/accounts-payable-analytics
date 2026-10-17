@@ -500,6 +500,7 @@ Combining financial expertise with modern analytical tools, including SQL Server
 **LinkedIn:** https://www.linkedin.com/in/brice-abogo
 
 **Email:** briceabogo@gmail.com
+**Email:** briceabogo@lynis.online
 
 ---
 
@@ -512,6 +513,7 @@ The project includes:
 - Financial data transformation.
 - Relational data modeling.
 - DAX-based financial analysis.
+- SQL-based financial analysis.
 - Interactive Power BI dashboards.
 - On-premises data gateway integration.
 - Financial insights and business recommendations.

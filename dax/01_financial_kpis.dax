@@ -1,0 +1,113 @@
+// =====================================================
+// ACCOUNTS PAYABLE ANALYTICS
+// SECTION 01: CORE FINANCIAL KPIs
+//
+// PURPOSE:
+// Calculate fundamental financial indicators used
+// throughout the Accounts Payable dashboard.
+//
+// AUTHOR: Brice Abogo
+// =====================================================
+
+
+// -----------------------------------------------------
+// 1. TOTAL SUPPLIER PURCHASES
+//
+// Business Definition:
+// Total value of supplier invoices recorded
+// within the current reporting context.
+//
+// Source: DETTES[Achats]
+// -----------------------------------------------------
+
+Total Achats =
+SUM(
+    DETTES[Achats]
+)
+
+
+// -----------------------------------------------------
+// 2. TOTAL SUPPLIER PAYMENTS
+//
+// Business Definition:
+// Total amount of payments made to suppliers
+// within the current reporting context.
+//
+// Source: REGLEMENTS[Montant_Paye]
+// -----------------------------------------------------
+
+Total Réglé =
+SUM(
+    REGLEMENTS[Montant_Paye]
+)
+
+
+// -----------------------------------------------------
+// 3. NET OUTSTANDING PAYABLES
+//
+// Business Definition:
+// Difference between recorded supplier purchases
+// and supplier payments.
+//
+// Accounting Formula:
+// Outstanding Payables = Purchases - Payments
+//
+// Note:
+// Results depend on the active filter context,
+// especially invoice and payment dates.
+// -----------------------------------------------------
+
+Solde Dû =
+[Total Achats] - [Total Réglé]
+
+
+// -----------------------------------------------------
+// 4. TOTAL OUTSTANDING INVOICE BALANCES
+//
+// Business Definition:
+// Sum of outstanding balances calculated
+// at individual invoice level.
+//
+// Source: DETTES[Solde]
+//
+// Note:
+// This measure may differ from [Solde Dû]
+// when different date filters are applied.
+// -----------------------------------------------------
+
+Total Solde =
+SUM(
+    DETTES[Solde]
+)
+
+
+// -----------------------------------------------------
+// 5. NUMBER OF SUPPLIER INVOICES
+//
+// Business Definition:
+// Count of distinct supplier invoices.
+//
+// DISTINCTCOUNT is used because invoice numbers
+// are stored as text.
+// -----------------------------------------------------
+
+Nbre Facture reçues =
+DISTINCTCOUNT(
+    DETTES[Num_Facture]
+)
+
+
+// -----------------------------------------------------
+// 6. NUMBER OF FULLY PAID INVOICES
+//
+// Business Definition:
+// Number of invoices classified as fully paid.
+//
+// Source: DETTES[Statut]
+// -----------------------------------------------------
+
+Nbre Factures Totalement Payées =
+CALCULATE(
+    [Nbre Facture reçues],
+    DETTES[Statut] = "Payée"
+)

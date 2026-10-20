@@ -527,4 +527,3 @@ The project includes:
 - On-premises data gateway integration.
 - Financial insights and business recommendations.
 
-Technical scripts and supporting documentation are being progressively added to this repository.

@@ -515,15 +515,14 @@ Combining financial expertise with modern analytical tools, including SQL Server
 
 ## 18. Project Status
 
-**Status:** Portfolio Documentation in Progress
+**Status:** Completed — Release `v1.0.0`
 
-The project includes:
+The project delivers a complete end-to-end Accounts Payable analytics workflow:
 
-- Financial data transformation.
-- Relational data modeling.
-- DAX-based financial analysis.
-- SQL-based financial analysis.
-- Interactive Power BI dashboards.
-- On-premises data gateway integration.
-- Financial insights and business recommendations.
-
+- Multi-source financial data extraction and reconciliation (`DETTES`, `REGLEMENTS`, `LISTEF`, `Calendar`).
+- Relational data modeling with active and inactive date relationships.
+- DAX-based financial KPIs, aging classification, and dynamic 6-month estimated DPO.
+- SQL Server data validation and accounting control checks.
+- Four-page interactive Power BI report and PDF export (`reports/accounts-payable-dashboard.pdf`).
+- Cloud publication to Power BI Service with scheduled refresh via an On-Premises Data Gateway.
+- Executive financial findings and actionable working-capital recommendations.
